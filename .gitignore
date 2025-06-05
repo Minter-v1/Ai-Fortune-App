@@ -162,3 +162,6 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# 앱 모듈 빌드 폴더 추가
+app/build/
