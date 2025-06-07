@@ -15,6 +15,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+
+        // OpenAI API 키 설정 (local.properties에서 읽어옴)
+        val openaiApiKey = project.findProperty("MOCOM_API_KEY")?.toString()
+        buildConfigField("String", "MOCOM_API_KEY", "\"$openaiApiKey\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,6 +42,7 @@ android {
     
     buildFeatures {
         viewBinding = true
+        buildConfig = true //BuildConfig 활성화
     }
 }
 
@@ -63,18 +69,28 @@ dependencies {
     // Room Database
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.room.external.antlr)
     kapt("androidx.room:room-compiler:2.6.1")
     
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    
+
+    //kotlin 버전 명시
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-common:2.0.0")
+
     // Location Services
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     
     // Image Loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    
+
+    // Lottie 라이브러리
+    implementation("com.airbnb.android:lottie:6.1.0")
+
+
     // 테스트 라이브러리
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
