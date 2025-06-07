@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="350dp"
+    android:height="400dp"
+    android:viewportWidth="350"
+    android:viewportHeight="400">
+
+    <!-- 북두칠성 연결선 - 올바른 국자 모양 -->
+
+    <!-- 국자 바닥 (왼쪽에서 오른쪽으로) -->
+    <!-- 두베(star_1) → 메라크(star_2) -->
+    <path
+        android:pathData="M31,285 L64,351"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.6" />
+
+    <!-- 메라크(star_2) → 메그레즈(star_4) -->
+    <path
+        android:pathData="M64,351 L130,330"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.6" />
+
+    <!-- 메그레즈(star_4) → 페크다(star_3) -->
+    <path
+        android:pathData="M130,330 L135,257"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.6" />
+
+    <!-- 페크다(star_3) → 두베(star_1) (국자 옆면) -->
+    <path
+        android:pathData="M135,257 L31,285"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.6" />
+
+    <!-- 손잡이 (페크다에서 시작) -->
+    <!-- 페크다(star_3) → 알리오트(star_5) -->
+    <path
+        android:pathData="M135,257 L196,204"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.6" />
+
+    <!-- 알리오트(star_5) → 미자르(star_6) -->
+    <path
+        android:pathData="M196,204 L255,161"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.6" />
+
+    <!-- 미자르(star_6) → 베네트나시(star_7) -->
+    <path
+        android:pathData="M255,161 L310,174"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.6" />
+
+</vector>
