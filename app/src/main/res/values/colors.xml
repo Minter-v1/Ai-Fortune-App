@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="dafaultBtn">#7B2CBF</color>
+    <color name="pink">#CB82BA</color>
+    <color name="bgContent">#1F2127</color>
+    <color name="modal">#696B6E</color>
+
+    <!--플레이스 홀더 색상-->
+    <color name="placeholder">#66D9D9D9</color>
 </resources>
