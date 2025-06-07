@@ -4,7 +4,7 @@ import java.util.*
 import com.minter.ai_fortune_app.utils.DateUtils
 
 data class OpenAIRequest(
-    val model: String = "gpt-4o",
+    val model: String = "gpt-4o",//기본값
     val messages: List<Message>, // messages: AI에게 보낼 메시지들의 리스트
     val max_tokens: Int = 500, // TODO: 토큰 수 조정 필요
     val temperature: Double = 0.7   // TODO: AI의 창의성 조절(0.0~1.0, 높을수록 창의적)
@@ -104,7 +104,7 @@ object PromptTemplate {
         """.trimIndent()
     }
 
-    // 감정 분석 프롬프트
+    //MARK: - 감정 분석 프롬프트
     fun createEmotionAnalysisPrompt(userMessages: List<String>): String {
         val messagesText = userMessages.joinToString ("\n"){ "- $it" }
 
