@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--NOTE: Activity에서 placeholder 텍스트 변환-->
+    <EditText
+        android:od="@+id/et_input_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:hint="@string/pc_name"
+        android:textColor="@color/white"
+        android:textColorHint="@color/placeholder"
+        android:textSize="12dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="top" />
+
+    <!--MARK: 언더라인 뷰-->
+    <View
+        android:id="@+id/view_underline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/pink"/>
+
+</LinearLayout>

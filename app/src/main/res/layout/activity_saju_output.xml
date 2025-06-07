@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_home">
+
+    <!--패딩-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="40dp"/>
+
+    <!--상단 타이틀-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:gravity="center">
+
+        <ImageView
+            android:src="@drawable/ic_star"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="사주가\n도착했어요 !"
+            android:textAppearance="@style/title_text"
+            />
+
+    </LinearLayout>
+
+    <!--사용자 정보 + 안내 문구-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="27dp">
+
+        <!--생년월일-->
+        <TextView
+            android:id="@+id/tv_user_birthdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="YYYY.MM.DD"
+            android:textAppearance="@style/subtitle"/>
+
+        <!--사용자 이름-->
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="홍길동님의 사주입니다."
+            android:textAppearance="@style/subtitle"/>
+
+    </LinearLayout>
+
+    <!-- 메인 영역: 카드뷰 + 스크롤 + 고정버튼 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- 카드뷰 배경 (버튼 영역까지 확장) -->
+        <include
+            layout="@layout/component_box_area"/>
+
+        <!--텍스트 영역 (스크롤)-->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="80dp"
+            android:fillViewport="true">
+
+            <TextView
+                android:id="@+id/tv_saju_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingHorizontal="28dp"
+                android:paddingBottom="20dp"
+                android:text="당신의 오늘의 사주는 블라ㅡ발 ㅣㅇ러ㅏ이러
+ㅇ날니아러이ㅏ러ㅣㄴ아러아ㅣㅓ린얼이ㅏㅓ리아러이ㅏ러이ㅏㅓㄹ닝러니이러ㅣㅇ니렁니ㅏ런ㅇ리ㅏㄴㅣ아린ㅇ린어린아ㅓ리나어라ㅓㅇ라ㅓㅇ라ㅓ알어랑라라ㅓ라ㅓㅏㅓㅏㅓㅏㅓㅏㅓㅏ러ㅏㄹ라ㅓ라러ㅏㅓ라ㅓ라ㅓ라ㅓ럴인아ㅓ린아러니ㅏ어리다ㅓ맂더리ㅏ린ㅇ링나런아ㅣ ㅇ날니ㅏㄹ ㅣ낭르 ㅏㅣㄴㅇ릐ㅏㅇㄴㄹ 아ㅣㄴ러ㅏㅣㅇ너당신의 오늘의 사주는 블라ㅡ발 ㅣㅇ러ㅏ이러
+ㅇ날니아러이ㅏ러ㅣㄴ아러아ㅣㅓ린얼이ㅏㅓ리아러이ㅏ러이ㅏㅓㄹ닝러니이러ㅣㅇ니렁니ㅏ런ㅇ리ㅏㄴㅣ아린ㅇ린어린아ㅓ리나어라ㅓㅇ라ㅓㅇ라ㅓ알어랑라라ㅓ라ㅓㅏㅓㅏㅓㅏㅓㅏㅓㅏ러ㅏㄹ라ㅓ라러ㅏㅓ라ㅓ라ㅓ라ㅓ럴인아ㅓ린아러니ㅏ어리다ㅓ맂더리ㅏ린ㅇ링나런아ㅣ ㅇ날니ㅏㄹ ㅣ낭르 ㅏㅣㄴㅇ릐ㅏㅇㄴㄹ 아ㅣㄴ러ㅏㅣㅇ너"
+                android:gravity="top"
+                android:textAppearance="@style/btn_title_text"
+                />
+
+        </ScrollView>
+
+        <!-- 버튼 (고정, 스크롤 안됨) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:paddingHorizontal="28dp"
+            android:paddingBottom="20dp">
+
+            <include
+                layout="@layout/component_no_glow_btn"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

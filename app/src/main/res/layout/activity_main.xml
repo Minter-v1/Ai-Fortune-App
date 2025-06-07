@@ -1,32 +1,137 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <!--배경-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_home" />
+
+    <!--MARK: - 컨테이너 / 하단에 고정 (먼저 배치)-->
+    <!--MARK: - 컨테이너 / 하단에 고정 (올바른 방식)-->
+    <LinearLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AI 운세 앱에 오신 것을 환영합니다!"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
+        android:background="@drawable/box_area"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
 
-    <Button
-        android:id="@+id/btnStartFortune"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="운세 시작하기"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        <!--MARK: 기본 사주 보기 버튼-->
+        <TextView
+            android:id="@+id/tv_daily_saju_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingBottom="20dp"
+            android:text="@string/daily_saju"
+            android:textAppearance="@style/title_text" />
 
-</androidx.constraintlayout.widget.ConstraintLayout> 
+        <include
+            android:id="@+id/daily_saju_btn"
+            layout="@layout/component_purple_btn" />
+
+        <TextView
+            android:id="@+id/tv_domain_saju_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:text="@string/domain_saju"
+            android:textAppearance="@style/title_text" />
+
+        <!--MARK: 분야별 선택 0행-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/love_saju_btn"
+                layout="@layout/component_purple_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/study_saju_btn"
+                layout="@layout/component_purple_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <!--MARK: 분야별 선택 1행-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/career_saju_btn"
+                layout="@layout/component_purple_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/health_saju_btn"
+                layout="@layout/component_purple_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--MARk: 고스티니 iv-->
+    <ImageView
+        android:id="@+id/iv_ghost_character"
+        android:layout_width="252dp"
+        android:layout_height="225dp"
+        android:layout_marginBottom="68dp"
+        android:src="@drawable/ic_ghost"
+        app:layout_constraintBottom_toTopOf="@+id/content_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/chat_ghost_main"
+        android:layout_width="136dp"
+        android:layout_height="35dp"
+        android:background="@drawable/chat_ghost_main"
+        android:clipToOutline="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintBottom_toTopOf="@+id/iv_ghost_character">
+
+        <TextView
+            android:id="@+id/tv_speech_bubble_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/chat_ghost"
+            android:text="안녕하세요! 반가워요!"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"/>
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
