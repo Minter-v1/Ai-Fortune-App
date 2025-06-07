@@ -13,4 +13,14 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.Ai_Fortune_App.Fullscreen" parent="Theme.Ai_Fortune_App">
+        <!-- 상태바 숨기기 -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- 액션바 숨기기 -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <!-- 시스템 UI 오버레이 제거 -->
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>
