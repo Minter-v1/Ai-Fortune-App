@@ -1,6 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgContent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="80dp"
+        android:orientation="vertical">
+        <!--타이틀-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="131dp"
+                android:layout_height="122dp"
+                android:paddingEnd="10dp"
+                android:src="@drawable/ic_ghost" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="이민지님\n오늘도 화이팅!"
+                android:textAppearance="@style/title_text" />
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="36dp"/>
+        
+        <!--미션 안내 창-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="10dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_mission_modal">
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/clock"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="오늘의 미션"
+                    android:textAppearance="@style/subtitle"/>
+                <LinearLayout
+                    android:layout_width="109dp"
+                    android:layout_height="38dp">
+                    <include
+                        layout="@layout/component_no_glow_btn"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="미션 입니당 웃끼기"
+                android:textColor="@color/pink"
+                android:textSize="21sp"
+                android:paddingVertical="10dp"
+                android:paddingStart="10dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="남은시간 띄우기"
+                android:textSize="18sp"
+                android:textColor="@color/modal"
+                android:paddingVertical="10dp"
+                android:paddingStart="10dp"/>
+            
+            
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+
+        <!--결과 다시 보기 버튼-->
+        <include
+            layout="@layout/component_no_glow_btn"/>
+
+        <!--별자리 보기 버튼-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="36dp"
+            android:visibility="gone
+">
+            <include
+                layout="@layout/component_no_glow_btn"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+    <!--MARK: 미션 성공 모달 창 화면-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#BF1F2127"
+        android:visibility="gone">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="54dp"
+            android:layout_centerVertical="true">
+
+            <!--NOTE: kt로 ic, text 변경해야함-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <include
+                    layout="@layout/component_mission_modal"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</FrameLayout>

@@ -1,6 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingVertical="80dp"
+    android:paddingHorizontal="40dp"
+    android:background="@drawable/bg_space"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- 제목 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="당신의\n감정 별자리"
+        android:textAppearance="@style/title_text"
+        android:layout_marginBottom="40dp" />
+
+    <!-- 별자리 맵 영역 -->
+    <RelativeLayout
+        android:id="@+id/constellation_map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 연결선 배경 이미지 -->
+        <ImageView
+            android:id="@+id/constellation_lines"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.4"
+            android:scaleType="matrix"
+            android:src="@drawable/constellation_lines" />
+
+        <!-- 북두칠성 별들 - absolute 좌표로 배치 -->
+        <!-- 1. 두베 -->
+        <ImageView
+            android:id="@+id/star_1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="269dp"
+            android:src="@drawable/ic_star_gray"
+            android:tag="EMPTY" />
+
+        <!-- 2. 메라크 -->
+        <ImageView
+            android:id="@+id/star_2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="335dp"
+            android:src="@drawable/ic_star_gray"
+            android:tag="EMPTY" />
+
+        <!-- 3. 페크다 -->
+        <ImageView
+            android:id="@+id/star_3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="119dp"
+            android:layout_marginTop="241dp"
+            android:src="@drawable/ic_star_gray"
+            android:tag="EMPTY" />
+
+        <!-- 4. 메그레즈 -->
+        <ImageView
+            android:id="@+id/star_4"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="114dp"
+            android:layout_marginTop="314dp"
+            android:src="@drawable/ic_star_gray"
+            android:tag="EMPTY" />
+
+        <!-- 5. 알리오트 -->
+        <ImageView
+            android:id="@+id/star_5"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="180dp"
+            android:layout_marginTop="188dp"
+            android:src="@drawable/ic_star_gray"
+            android:tag="EMPTY" />
+
+        <!-- 6. 미자르 -->
+        <ImageView
+            android:id="@+id/star_6"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="239dp"
+            android:layout_marginTop="145dp"
+            android:src="@drawable/ic_star_gray"
+            android:tag="EMPTY" />
+
+        <!-- 7. 베네트나시 -->
+        <ImageView
+            android:id="@+id/star_7"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="294dp"
+            android:layout_marginTop="158dp"
+            android:src="@drawable/ic_star_gray"
+            android:tag="EMPTY" />
+
+    </RelativeLayout>
+    <Space
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/component_white_btn"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>

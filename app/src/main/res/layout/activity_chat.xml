@@ -1,6 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/bg_home"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#30FFFFFF" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="40dp"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="24dp">
+
+        <!-- 상단 X 버튼 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/btn_chat_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_cancel"
+                android:paddingBottom="40dp"/>
+        </LinearLayout>
+
+        <!-- 채팅 메시지들 (동적으로 추가/제거) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_chat_messages"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- 입력창 (채팅 중) -->
+        <LinearLayout
+            android:id="@+id/layout_chat_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <include
+                layout="@layout/component_chat_input_field"/>
+
+        </LinearLayout>
+
+        <!-- 완료 버튼 (채팅 끝) / 일단 숨김처리 함 (kt로 상태 관리)-->
+        <LinearLayout
+            android:id="@+id/layout_complete_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <include
+                layout="@layout/component_no_glow_btn"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

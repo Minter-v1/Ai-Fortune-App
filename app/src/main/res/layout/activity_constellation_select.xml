@@ -19,18 +19,24 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingVertical="80dp"
-        android:paddingHorizontal="40dp">
+        android:paddingHorizontal="40dp"
+        android:visibility="invisible">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="감정이르음~~!"
-            android:textAppearance="@style/title_text"/>
+            android:textAppearance="@style/title_text"
+            android:paddingBottom="100dp"/>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/iv_star_happy"/>
+            android:src="@drawable/iv_star_happy"
+            android:paddingBottom="100dp"/>
+
+        <include
+            layout="@layout/component_white_btn" />
 
     </LinearLayout>
 
