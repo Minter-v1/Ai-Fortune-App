@@ -6,7 +6,7 @@
 
     <!--NOTE: Activity에서 placeholder 텍스트 변환-->
     <EditText
-        android:od="@+id/et_input_field"
+        android:id="@+id/et_input_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -15,7 +15,10 @@
         android:textColorHint="@color/placeholder"
         android:textSize="12dp"
         android:layout_marginBottom="8dp"
-        android:gravity="top" />
+        android:gravity="top"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1" />
 
     <!--MARK: 언더라인 뷰-->
     <View

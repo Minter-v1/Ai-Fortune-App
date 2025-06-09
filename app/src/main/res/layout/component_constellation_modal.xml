@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="48dp">
         <ImageView
+            android:id="@+id/btn_modal_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -19,6 +20,7 @@
 
 
     <TextView
+        android:id="@+id/tv_modal_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="오늘은\n이미 수집하셨습니다."

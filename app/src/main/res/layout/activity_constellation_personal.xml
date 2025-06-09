@@ -125,6 +125,7 @@
         android:layout_height="wrap_content">
 
         <include
+            android:id="@+id/btn_next"
             layout="@layout/component_white_btn"/>
     </LinearLayout>
 

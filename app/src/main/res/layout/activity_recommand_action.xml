@@ -37,6 +37,7 @@
             android:layout_weight="1"/>
 
         <LinearLayout
+            android:id="@+id/btn_try_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <include
@@ -48,6 +49,7 @@
 
     <!--MARK: 모달 창 화면-->
     <RelativeLayout
+        android:id="@+id/layout_modal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#BF1F2127"

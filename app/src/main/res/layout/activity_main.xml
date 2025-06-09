@@ -98,27 +98,27 @@
 
     </LinearLayout>
 
-    <!--MARk: 고스티니 iv-->
+    <!--MARK: 고스티니 캐릭터 (content_container 기준으로 배치)-->
     <ImageView
         android:id="@+id/iv_ghost_character"
         android:layout_width="252dp"
         android:layout_height="225dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/ic_ghost"
         app:layout_constraintBottom_toTopOf="@+id/content_container"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!--MARK: 말풍선 (캐릭터 위에 배치)-->
     <RelativeLayout
         android:id="@+id/chat_ghost_main"
         android:layout_width="136dp"
         android:layout_height="35dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/chat_ghost_main"
         android:clipToOutline="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintBottom_toTopOf="@+id/iv_ghost_character">
 
         <TextView

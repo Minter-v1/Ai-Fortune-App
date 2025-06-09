@@ -12,6 +12,7 @@
         android:src="@drawable/test2"/>
 
     <TextView
+        android:id="@+id/tv_btn_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

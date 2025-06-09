@@ -23,6 +23,7 @@
                 android:src="@drawable/ic_ghost" />
 
             <TextView
+                android:id="@+id/tv_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="이민지님\n오늘도 화이팅!"
@@ -62,6 +63,7 @@
                     android:text="오늘의 미션"
                     android:textAppearance="@style/subtitle"/>
                 <LinearLayout
+                    android:id="@+id/btn_mission_complete"
                     android:layout_width="109dp"
                     android:layout_height="38dp">
                     <include
@@ -71,6 +73,7 @@
 
             </LinearLayout>
             <TextView
+                android:id="@+id/tv_mission_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="미션 입니당 웃끼기"
@@ -80,6 +83,7 @@
                 android:paddingStart="10dp"
                 />
             <TextView
+                android:id="@+id/tv_remaining_time"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="남은시간 띄우기"
@@ -96,16 +100,21 @@
             android:layout_height="40dp"/>
 
         <!--결과 다시 보기 버튼-->
+        <LinearLayout
+            android:id="@+id/btn_retry_mission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <include
             layout="@layout/component_no_glow_btn"/>
+    </LinearLayout>
 
         <!--별자리 보기 버튼-->
         <LinearLayout
+            android:id="@+id/btn_view_constellation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="36dp"
-            android:visibility="gone
-">
+            android:visibility="gone">
             <include
                 layout="@layout/component_no_glow_btn"/>
 
@@ -119,6 +128,7 @@
 
     <!--MARK: 미션 성공 모달 창 화면-->
     <RelativeLayout
+        android:id="@+id/layout_mission_success"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#BF1F2127"

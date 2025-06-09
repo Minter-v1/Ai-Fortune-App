@@ -13,6 +13,7 @@
         android:gravity="center_vertical">
 
         <EditText
+            android:id="@+id/et_chat_input"
             android:layout_width="wrap_content"
             android:hint="당신의 이야기르 들려주세요"
             android:textColorHint="@color/white"
@@ -29,6 +30,7 @@
             />
 
         <ImageView
+            android:id="@+id/iv_send_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_sent_message"/>
