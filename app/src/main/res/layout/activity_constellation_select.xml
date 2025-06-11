@@ -13,13 +13,14 @@
         app:lottie_fileName="lottie/constellation_anime.json"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"/>
-    
+
     <LinearLayout
         android:id="@+id/layout_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingVertical="80dp"
+        android:paddingTop="80dp"
+        android:paddingBottom="40dp"
         android:paddingHorizontal="40dp"
         android:visibility="invisible">
 
@@ -28,19 +29,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="감정이르음~~!"
-            android:textAppearance="@style/title_text"
-            android:paddingBottom="100dp"/>
+            android:textAppearance="@style/title_text"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/iv_star_emotion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/iv_star_happy"
-            android:paddingBottom="100dp"/>
+            android:adjustViewBounds="true"
+            android:src="@drawable/iv_star_happy"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <include
             android:id="@+id/btn_next"
-            layout="@layout/component_white_btn" />
+            layout="@layout/component_white_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

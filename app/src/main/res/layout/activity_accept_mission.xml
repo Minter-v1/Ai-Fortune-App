@@ -136,6 +136,7 @@
 
 
         <LinearLayout
+            android:id="@+id/layout_mission_success_modal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="54dp"

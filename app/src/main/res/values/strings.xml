@@ -12,10 +12,11 @@
     <string name="study">학업</string>
     <string name="health">건강</string>
 
+    <!--버튼 텍스트-->
+    <string name="btnname">버튼</string>
 
     <!--페이지별 타이틀 텍스트-->
     <string name="input_title">당신의\n정보를\n입력해주세요</string>
-
 
     <!--플레이스 홀더-->
     <string name="pc_name">이름을 입력하세요</string>

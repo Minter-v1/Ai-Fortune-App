@@ -11,6 +11,7 @@
     <color name="pink">#CB82BA</color>
     <color name="bgContent">#1F2127</color>
     <color name="modal">#696B6E</color>
+    <color name="green">#4CAF50</color>
 
     <!--플레이스 홀더 색상-->
     <color name="placeholder">#66D9D9D9</color>

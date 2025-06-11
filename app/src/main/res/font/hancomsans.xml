@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Light 웨이트 (일반 텍스트용) -->
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="300"
+        android:font="@font/hancomsans_light"
+        app:fontStyle="normal"
+        app:fontWeight="300"
+        app:font="@font/hancomsans_light" />
+
+    <!-- Normal 웨이트로도 사용 (Light를 기본으로) -->
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/hancomsans_light"
+        app:fontStyle="normal"
+        app:fontWeight="400"
+        app:font="@font/hancomsans_light" />
+
+    <!-- Bold 웨이트로도 사용 (Light를 굵게 표시) -->
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        android:font="@font/hancomsans_light"
+        app:fontStyle="normal"
+        app:fontWeight="700"
+        app:font="@font/hancomsans_light" />
+
+</font-family> 

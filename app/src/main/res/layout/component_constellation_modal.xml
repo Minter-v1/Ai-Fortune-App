@@ -4,12 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/bg_constellation_modal"
-    android:padding="10dp"
+    android:padding="20dp"
     >
+    
+    <!-- 상단 닫기 버튼 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="48dp">
+        android:paddingBottom="20dp">
         <ImageView
             android:id="@+id/btn_modal_close"
             android:layout_width="wrap_content"
@@ -18,15 +20,51 @@
             android:src="@drawable/ic_cancel"/>
     </LinearLayout>
 
+    <!-- 별 이미지 -->
+    <ImageView
+        android:id="@+id/iv_star_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/iv_star_happy"
+        android:scaleType="fitCenter"/>
 
+    <!-- 별 이름 제목 -->
     <TextView
-        android:id="@+id/tv_modal_message"
+        android:id="@+id/tv_star_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="오늘은\n이미 수집하셨습니다."
+        android:text="✨ 두베"
         android:textAppearance="@style/subtitle"
-        android:paddingBottom="98dp"
-        android:gravity="center"/>
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
 
+    <!-- 별자리 상세 정보 -->
+    <TextView
+        android:id="@+id/tv_star_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="수집 날짜: 2024-01-01\n감정: 행복"
+        android:textAppearance="@style/chat_text"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:lineSpacingExtra="4dp"/>
+
+    <!-- 별자리 설명 -->
+    <TextView
+        android:id="@+id/tv_star_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="이 별은 당신의 소중한 감정이 담긴 별입니다! 🌟"
+        android:textAppearance="@style/chat_text"
+        android:textSize="14sp"
+        android:textColor="@color/placeholder"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"
+        android:lineSpacingExtra="2dp"/>
 
 </LinearLayout>

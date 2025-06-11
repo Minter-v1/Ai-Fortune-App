@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- 일반 웨이트 (Regular) -->
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/eulyoo1945_regular"
+        app:fontStyle="normal"
+        app:fontWeight="400"
+        app:font="@font/eulyoo1945_regular" />
+
+    <!-- 세미볼드 웨이트 -->
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        android:font="@font/eulyoo1945_semibold"
+        app:fontStyle="normal"
+        app:fontWeight="600"
+        app:font="@font/eulyoo1945_semibold" />
+
+</font-family> 

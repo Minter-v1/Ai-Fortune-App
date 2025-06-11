@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Ai_Fortune_App" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Ai_Fortune_App" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -12,6 +12,20 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        
+        <!-- ⭐ HancomSans 폰트 전체 적용 -->
+        <item name="android:fontFamily">@font/hancomsans</item>
+        <item name="fontFamily">@font/hancomsans</item>
+        
+        <!-- 기본 텍스트 스타일 설정 -->
+        <item name="android:textViewStyle">@style/DefaultTextView</item>
+    </style>
+
+    <!-- ⭐ 기본 TextView 스타일 정의 (HancomSans 폰트 적용) -->
+    <style name="DefaultTextView" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/hancomsans</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="Theme.Ai_Fortune_App.Fullscreen" parent="Theme.Ai_Fortune_App">
@@ -22,5 +36,7 @@
         <item name="windowActionBar">false</item>
         <!-- 시스템 UI 오버레이 제거 -->
         <item name="android:windowContentOverlay">@null</item>
+        <!-- Activity 전환 애니메이션 비활성화 -->
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 </resources>
