@@ -30,13 +30,27 @@ class OpenAIManager private constructor() {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: OpenAIManager().also {
                     INSTANCE = it
-                    Log.d(TAG, "OpenAIManager 인스턴스 생성")
+                    Log.d(TAG, "🔥🔥🔥 OpenAIManager 인스턴스 생성 🔥🔥🔥")
                 }
             }
         }
     }
 
     private val apiKey = BuildConfig.MOCOM_API_KEY
+
+    init {
+        // API 키 상태 확인 (디버깅용)
+        Log.d(TAG, "🔥🔥🔥 OpenAIManager init 시작 🔥🔥🔥")
+        Log.d(TAG, "🔑 BuildConfig.MOCOM_API_KEY 값: '$apiKey'")
+        Log.d(TAG, "🔑 API 키 null 여부: ${apiKey == null}")
+        Log.d(TAG, "🔑 API 키 blank 여부: ${apiKey.isNullOrBlank()}")
+        
+        if (apiKey.isNullOrBlank()) {
+            Log.e(TAG, "🚨🚨🚨 API 키가 설정되지 않았습니다! 🚨🚨🚨")
+        } else {
+            Log.d(TAG, "✅ API 키 로드 성공 - 길이: ${apiKey.length}자, 시작: ${apiKey.take(10)}...")
+        }
+    }
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -47,7 +61,9 @@ class OpenAIManager private constructor() {
 
     suspend fun generateSaju(sajuRequest: SajuRequest): Result<String> = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "사주 생성 시작")
+            Log.d(TAG, "🚀 사주 생성 시작")
+            Log.d(TAG, "🔑 API 키 상태: ${if (apiKey.isNullOrBlank()) "없음" else "있음 (${apiKey.length}자)"}")
+            Log.d(TAG, "🌐 요청 URL: $BASE_URL")
 
             val prompt = PromptTemplate.createSajuPrompt(sajuRequest.userInfo, sajuRequest.category)
 
@@ -80,17 +96,22 @@ class OpenAIManager private constructor() {
                     Result.failure(Exception("서버 응답을 처리할 수 없습니다."))
                 }
             } else {
+                val errorBody = response.errorBody()?.string()
                 val errorMessage = when (response.code()) {
-                    401 -> "API 인증에 실패했습니다."
+                    401 -> "API 인증에 실패했습니다. API 키를 확인해주세요."
                     429 -> "요청이 너무 많습니다. 잠시 후 다시 시도해주세요."
                     500, 502, 503 -> "서버에 일시적인 문제가 발생했습니다."
                     else -> "사주 생성에 실패했습니다."
                 }
+                Log.e(TAG, "🚨 API 호출 실패 - 상태코드: ${response.code()}, 에러: $errorBody")
                 Result.failure(Exception(errorMessage))
             }
 
         } catch (e: Exception) {
-            Log.e(TAG, "사주 생성 중 예외 발생", e)
+            Log.e(TAG, "🚨 사주 생성 중 예외 발생")
+            Log.e(TAG, "🚨 예외 타입: ${e.javaClass.simpleName}")
+            Log.e(TAG, "🚨 예외 메시지: ${e.message}")
+            e.printStackTrace()
             Result.failure(handleNetworkException(e, "사주 생성"))
         }
     }
@@ -191,45 +212,43 @@ class OpenAIManager private constructor() {
             }
         }
 
-    suspend fun analyzeEmotion(userMessages: List<String>): Result<EmotionType> =
-        withContext(Dispatchers.IO) {
-            try {
-                Log.d(TAG, "감정 분석 시작")
+    suspend fun analyzeEmotion(userMessages: List<String>): Result<EmotionType> = withContext(Dispatchers.IO) {
+        try {
+            Log.d(TAG, "감정 분석 시작")
+            
+            val prompt = PromptTemplate.createEmotionAnalysisPrompt(userMessages)
+            
+            val request = OpenAIRequest(
+                model = "gpt-4o",
+                messages = listOf(
+                    Message("system", "당신은 감정 분석 전문가입니다. 다음 감정 중 하나만 선택해주세요: HAPPY, ANGRY, SAD, TIMID, GRUMPY"),
+                    Message("user", prompt)
+                ),
+                max_tokens = 50,
+                temperature = 0.3
+            )
 
-                val prompt = PromptTemplate.createEmotionAnalysisPrompt(userMessages)
-
-                val request = OpenAIRequest(
-                    model = "gpt-4o",
-                    messages = listOf(
-                        Message("system", "당신은 텍스트 감정 분석 전문가입니다."),
-                        Message("user", prompt)
-                    ),
-                    max_tokens = 50,
-                    temperature = 0.3
-                )
-
-                val response = executeWithRetry("감정 분석") {
-                    apiService.createChatCompletion("Bearer $apiKey", request)
-                }
-
-                if (response.isSuccessful) {
-                    val openAIResponse = response.body()
-                    if (openAIResponse != null) {
-                        val emotion = OpenAIResponseParser.extractEmotionType(openAIResponse)
-                        Log.d(TAG, "감정 분석 성공")
-                        Result.success(emotion)
-                    } else {
-                        Result.failure(Exception("감정 분석 응답을 처리할 수 없습니다."))
-                    }
-                } else {
-                    Result.failure(Exception("감정 분석에 실패했습니다."))
-                }
-
-            } catch (e: Exception) {
-                Log.e(TAG, "감정 분석 중 예외 발생", e)
-                Result.failure(handleNetworkException(e, "감정 분석"))
+            val response = executeWithRetry("감정 분석") {
+                apiService.createChatCompletion("Bearer $apiKey", request)
             }
+
+            if (response.isSuccessful) {
+                val openAIResponse = response.body()
+                if (openAIResponse != null) {
+                    val emotionType = OpenAIResponseParser.extractEmotionType(openAIResponse)
+                    Log.d(TAG, "감정 분석 성공: $emotionType")
+                    Result.success(emotionType)
+                } else {
+                    Result.failure(Exception("서버 응답을 처리할 수 없습니다."))
+                }
+            } else {
+                Result.failure(Exception("감정 분석에 실패했습니다."))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "감정 분석 중 예외 발생", e)
+            Result.failure(handleNetworkException(e, "감정 분석"))
         }
+    }
 
     private suspend fun <T> executeWithRetry(
         operationName: String,
