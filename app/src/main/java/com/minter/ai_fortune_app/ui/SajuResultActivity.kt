@@ -34,8 +34,8 @@ class SajuResultActivity : AppCompatActivity() {
         private const val TAG = "SajuResultActivity"
 
         // 타이핑 애니메이션 관련 상수
-        private const val TYPING_DELAY = 50L      // 각 글자가 나타나는 간격 (밀리초)
-        private const val TYPING_START_DELAY = 500L // 타이핑 시작 전 대기 시간
+        private const val TYPING_DELAY = 20L      // 각 글자가 나타나는 간격 (밀리초)
+        private const val TYPING_START_DELAY = 300L // 타이핑 시작 전 대기 시간
     }
 
     // ================================
@@ -72,12 +72,7 @@ class SajuResultActivity : AppCompatActivity() {
     // 액티비티 생명주기 함수들
     // ================================
 
-    /**
-     * 액티비티가 생성될 때 호출되는 함수
-     *
-     * onCreate는 액티비티의 전체 생명주기에서 한 번만 호출됩니다.
-     * 여기서 UI 초기화, 데이터 처리, 이벤트 설정을 모두 수행합니다.
-     */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // 부모 클래스의 onCreate 호출 (필수)
         super.onCreate(savedInstanceState)
@@ -111,12 +106,7 @@ class SajuResultActivity : AppCompatActivity() {
         Log.d(TAG, "SajuResultActivity 초기화 완료")
     }
 
-    /**
-     * 액티비티가 화면에서 사라질 때 호출
-     *
-     * onDestroy는 액티비티가 완전히 종료될 때 호출됩니다.
-     * 여기서 메모리 누수를 방지하기 위해 정리 작업을 수행합니다.
-     */
+
     override fun onDestroy() {
         // 부모 클래스의 onDestroy 호출 (필수)
         super.onDestroy()
@@ -129,9 +119,6 @@ class SajuResultActivity : AppCompatActivity() {
 
     /**
      * 뒤로가기 버튼이 눌렸을 때 호출
-     *
-     * 사주 결과 화면에서는 뒤로가기를 허용하지 않습니다.
-     * 사용자가 반드시 다음 단계(채팅)로 진행하도록 유도합니다.
      */
     override fun onBackPressed() {
         val isFromAcceptMission = intent.getBooleanExtra("fromAcceptMission", false)
