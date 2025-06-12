@@ -13,15 +13,18 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
+        android:name=".AiFortuneApplication"
         android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ai_Fortune_App"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
         <!-- 메인 액티비티 - 전체화면 테마 적용 -->
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
             android:screenOrientation="portrait">
@@ -30,6 +33,70 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!-- 사주 입력 액티비티 -->
+        <activity
+            android:name=".ui.SajuInputActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
+
+        <!-- 로딩 액티비티 -->
+        <activity
+            android:name=".ui.LoadingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
+
+        <!-- 사주 결과 액티비티 -->
+        <activity
+            android:name=".ui.SajuResultActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
+
+        <!-- 채팅 액티비티 -->
+        <activity
+            android:name=".ui.ChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" />
+
+        <!-- 액션 추천 액티비티 -->
+        <activity
+            android:name=".ui.RecommendActionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
+
+        <!-- 미션 수락 액티비티 -->
+        <activity
+            android:name=".ui.AcceptMissionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
+
+        <!-- 별자리 선택 액티비티 -->
+        <activity
+            android:name=".ui.ConstellationSelectActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
+
+        <!-- 별자리 컬렉션 액티비티 -->
+        <activity
+            android:name=".ui.ConstellationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
+
+        <!-- 개인 별자리 맵 액티비티 -->
+        <activity
+            android:name=".ui.ConstellationPersonalActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ai_Fortune_App.Fullscreen"
+            android:screenOrientation="portrait" />
 
     </application>
 
