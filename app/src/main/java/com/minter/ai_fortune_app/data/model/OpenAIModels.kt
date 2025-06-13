@@ -2,6 +2,7 @@ package com.minter.ai_fortune_app.data.model
 
 import java.util.*
 import com.minter.ai_fortune_app.utils.DateUtils
+import android.util.Log
 
 data class OpenAIRequest(
     val model: String = "gpt-4o",//기본값
@@ -13,7 +14,7 @@ data class OpenAIRequest(
 /**
  * 메시지 구조
  * AI와 대화할 때 주고받는 메시지 하나하나를 표현
- * 예: "안녕하세요"라는 사용자 메시지 → Message(role="user", content="안녕하세요")
+ * ex) "안녕하세요"라는 사용자 메시지 → Message(role="user", content="안녕하세요")
  */
 data class Message(
     val role: String, //System, user, assistant
@@ -51,7 +52,7 @@ object PromptTemplate {
         사용자 정보:
         - 이름: ${userInfo.name}
         - 생년월일: ${userInfo.birthDate}
-        - 관심 사주 분야: ${category.displayName} //qa: enum의 dp Name이 이해가 잘 안됨
+        - 관심 사주 분야: ${category.displayName}
         
         다음 조건으로 ${category.displayName}에 관한 사주를 작성해주세요:
         
@@ -106,7 +107,7 @@ object PromptTemplate {
 
     //MARK: - 감정 분석 프롬프트
     fun createEmotionAnalysisPrompt(userMessages: List<String>): String {
-        val messagesText = userMessages.joinToString ("\n"){ "- $it" }
+        val messagesText = userMessages.joinToString("\n") { "- $it" }
 
         return """
         다음 사용자의 채팅 메세지들을 분석해서 종합적인 감정 상태를 파악해주세요.
@@ -114,54 +115,91 @@ object PromptTemplate {
         사용자 메세지들:
         $messagesText
         
-        다음 감정 중 하나만 선택해서 답변해주세요:
-        HAPPY, ANGRY, SAD, TIMID, GRUMPY
+        다음 감정 중 하나만 선택해서 답변해주세요 (대문자로만):
+        HAPPY: 기쁨, 행복, 긍정적인 감정
+        ANGRY: 분노, 짜증, 불만
+        SAD: 슬픔, 우울, 낙담
+        TIMID: 수줍음, 소심함, 불안
+        GRUMPY: 짜증, 불평, 불만족
         
         감정명만 답변해주세요. (예: HAPPY)
-        
         """.trimIndent()
     }
-    }
+}
 
 
 //MARK: - 응답 파싱
 object OpenAIResponseParser {
     //MARK: - 사주 내용 추출
     fun extractSajuContent(response: OpenAIResponse): String {
-        return response.choices.firstOrNull()?.message?.content
+        val content = response.choices.firstOrNull()?.message?.content
             ?: "사주를 생성하는데 문제가 발생했습니다."
+        
+        // JSON 따옴표 제거 및 정리
+        return content
+            .trim()
+            .removePrefix("\"")  // 시작 따옴표 제거
+            .removeSuffix("\"")  // 끝 따옴표 제거
+            .replace("\\\"", "\"")  // 이스케이프된 따옴표 복원
+            .trim()
     }
 
     //MARK: - 채팅 내용 추출, extractSajuContent와 기능은 같지만 에러 메세지가 다름
     fun extractChatContent(response: OpenAIResponse): String {
-        return response.choices.firstOrNull()?.message?.content
+        val content = response.choices.firstOrNull()?.message?.content
             ?: "응답을 받지 못했어요. 다시 시도해주세요!"
+            
+        // JSON 따옴표 제거 및 정리
+        return content
+            .trim()
+            .removePrefix("\"")  // 시작 따옴표 제거
+            .removeSuffix("\"")  // 끝 따옴표 제거
+            .replace("\\\"", "\"")  // 이스케이프된 따옴표 복원
+            .trim()
     }
 
     //MARK: - 미션 내용 추출
     fun extractMissionContent(response: OpenAIResponse): Pair<String, String> {
         val content = extractSajuContent(response)
+        
+        // JSON 따옴표 제거 및 정리
+        val cleanContent = content
+            .trim()
+            .removePrefix("\"")  // 시작 따옴표 제거
+            .removeSuffix("\"")  // 끝 따옴표 제거
+            .replace("\\\"", "\"")  // 이스케이프된 따옴표 복원
+            .trim()
 
-        val parts = content.split("|")
+        val parts = cleanContent.split("|")
 
         return if (parts.size >= 2) {
-            Pair(parts[0].trim(), parts[1].trim())
+            val title = parts[0].trim().removePrefix("\"").removeSuffix("\"").trim()
+            val description = parts[1].trim().removePrefix("\"").removeSuffix("\"").trim()
+            Pair(title, description)
         }  else {
-            //형식 맞지 않는 경 (|)
-            Pair("오늘의 행운 미션 !", content)
+            //형식 맞지 않는 경우 (|)
+            val cleanTitle = cleanContent.removePrefix("\"").removeSuffix("\"").trim()
+            Pair("오늘의 행운 미션 !", cleanTitle)
         }
     }
 
     fun extractEmotionType(response: OpenAIResponse): EmotionType {
-        val content = extractSajuContent(response).trim().uppercase()
-
-        return when (content) {
-            "HAPPY" -> EmotionType.HAPPY
-            "ANGRY" -> EmotionType.ANGRY
-            "SAD" -> EmotionType.SAD
-            "TIMID" -> EmotionType.TIMID
-            "GRUMPY" -> EmotionType.GRUMPY
-            else -> EmotionType.HAPPY // 기본값
+        val rawContent = response.choices.firstOrNull()?.message?.content ?: "HAPPY"
+        
+        // JSON 따옴표 제거 및 정리
+        val content = rawContent
+            .trim()
+            .removePrefix("\"")  // 시작 따옴표 제거
+            .removeSuffix("\"")  // 끝 따옴표 제거
+            .replace("\\\"", "\"")  // 이스케이프된 따옴표 복원
+            .trim()
+            .uppercase()
+        
+        return try {
+            EmotionType.valueOf(content)
+        } catch (e: IllegalArgumentException) {
+            Log.w("OpenAIResponseParser", "알 수 없는 감정 타입: '$content' (원본: '$rawContent'), 기본값(HAPPY) 사용")
+            EmotionType.HAPPY
         }
     }
 }

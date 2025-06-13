@@ -230,6 +230,9 @@ class LoadingActivity : AppCompatActivity() {
                     birthDate = userBirthDate
                 )
 
+                // 사용자 정보를 SharedPreferences에 저장
+                SharedPreferencesUtils.saveUserInfo(this@LoadingActivity, userName, userBirthDate)
+
                 // SajuRequest 객체 생성
                 val sajuRequest = SajuRequest(
                     userInfo = userInfo,

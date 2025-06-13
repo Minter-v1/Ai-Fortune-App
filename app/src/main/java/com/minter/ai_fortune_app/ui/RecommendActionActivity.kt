@@ -21,6 +21,8 @@ import com.minter.ai_fortune_app.data.model.*
 import com.minter.ai_fortune_app.utils.SharedPreferencesUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
 
 /**
  * 위치 기반 미션 추천 액티비티
@@ -72,6 +74,7 @@ class RecommendActionActivity : AppCompatActivity() {
     private lateinit var btnTryText: TextView             // 버튼 내부 텍스트
     private lateinit var layoutModal: View                // 미션 수락 모달창
     private lateinit var btnModalOk: View                 // 모달창의 OK 버튼
+    private lateinit var lottieAnimation: LottieAnimationView  // 🎬 Lottie 애니메이션 추가
 
     // ================================
     // 데이터 변수들
@@ -189,6 +192,7 @@ class RecommendActionActivity : AppCompatActivity() {
      * 사용자가 반드시 미션을 수락하고 다음 단계로 진행하도록 유도합니다.
      */
     override fun onBackPressed() {
+        super.onBackPressed()
         Log.d(TAG, "뒤로가기 버튼 클릭 - 무시됨")
         // super.onBackPressed()를 호출하지 않으면 뒤로가기가 동작하지 않음
         showMessage("미션을 선택해주세요!")
@@ -264,7 +268,10 @@ class RecommendActionActivity : AppCompatActivity() {
             tvRecommendAction = findViewById(R.id.tv_recommand_action)
             btnTryAction = findViewById(R.id.btn_try_action) // include된 레이아웃의 전체 뷰
             layoutModal = findViewById(R.id.layout_modal) // 모달창 전체 레이아웃
-
+            
+            // 🎬 Lottie 애니메이션 뷰 연결
+            lottieAnimation = findViewById(R.id.lottie_animation)
+            
             // include된 컴포넌트 내부의 텍스트뷰 찾기
             // component_no_glow_btn.xml 내부의 TextView
             btnTryText = btnTryAction.findViewById(R.id.tv_btn_text)
@@ -272,6 +279,9 @@ class RecommendActionActivity : AppCompatActivity() {
             // component_mission_modal.xml 내부의 OK 버튼
             btnModalOk = layoutModal.findViewById(R.id.btn_modal_ok)
 
+            // 초기 상태: 로딩 애니메이션 설정
+            setLoadingAnimation()
+            
             // 초기 텍스트 설정
             tvRecommendAction.text = "미션을\n준비하고\n있어요..."
             btnTryText.text = "위치 확인 중..."
@@ -405,8 +415,7 @@ class RecommendActionActivity : AppCompatActivity() {
     /**
      * 권한 요청 결과를 처리하는 함수
      *
-     * 이 함수는 사용자가 권한 요청 다이얼로그에서 선택을 했을 때 자동으로 호출됩니다.
-     * override fun은 부모 클래스의 함수를 재정의한다는 의미입니다.
+     * 이 함수는 사용자가 권한 요청 다이얼로그에서 선택을 했을 때 자동으로 호출
      */
     override fun onRequestPermissionsResult(
         requestCode: Int, // 권한 요청 시 전달한 요청 코드
@@ -490,7 +499,7 @@ class RecommendActionActivity : AppCompatActivity() {
     /**
      * 위치 획득을 시작하는 함수
      *
-     * 권한이 허용된 후 실제로 GPS를 사용해 현재 위치를 가져옵니다.
+     * 권한이 허용된 후 실제로 GPS를 사용해 현재 위치를를 가져옴
      */
     private fun startLocationAcquisition() {
         try {
@@ -596,8 +605,8 @@ class RecommendActionActivity : AppCompatActivity() {
     /**
      * 위치 획득 성공 시 처리하는 함수
      *
-     * GPS로부터 위치 정보를 성공적으로 받아왔을 때 호출됩니다.
-     * 받아온 위치 정보로 LocationInfo 객체를 생성하고 미션 생성을 시작합니다.
+     * GPS로부터 위치 정보를 성공적으로 받아왔을 때 호출
+     * 받아온 위치 정보로 LocationInfo 객체를 생성하고 미션 생성을 시작
      */
     private fun handleLocationSuccess(location: Location) {
         try {
@@ -607,7 +616,7 @@ class RecommendActionActivity : AppCompatActivity() {
             isLocationObtained = true
 
             // 위치 정보를 우리 앱의 데이터 모델로 변환
-            // Location 객체 (안드로이드 기본)를 LocationInfo 객체 (우리 앱 전용)로 변환
+            // Location 객체를 LocationInfo 객체로 변환
             userLocation = LocationInfo(
                 address = "현재 위치", // 실제로는 Geocoding API로 주소를 변환할 수 있음
                 latitude = location.latitude,   // 위도 (남북 위치)
@@ -615,7 +624,7 @@ class RecommendActionActivity : AppCompatActivity() {
                 timestamp = System.currentTimeMillis() // 현재 시간 (밀리초)
             )
 
-            // UI 업데이트
+            // 🎬 로딩 애니메이션 유지하면서 텍스트만 변경
             tvRecommendAction.text = "맞춤 미션을\n생성하고\n있어요..."
             btnTryText.text = "미션 생성 중..."
 
@@ -682,7 +691,7 @@ class RecommendActionActivity : AppCompatActivity() {
      * AI를 사용해 미션을 생성하는 함수
      *
      * 사용자의 위치 정보를 바탕으로 OpenAI API를 호출해
-     * 맞춤형 행운의 액션(미션)을 생성합니다.
+     * 맞춤형 행운의 액션(미션)을 생성
      */
     private fun startMissionGeneration() {
         // lifecycleScope.launch는 코루틴(비동기 처리)을 시작
@@ -732,22 +741,25 @@ class RecommendActionActivity : AppCompatActivity() {
     }
 
     /**
-     * 생성된 미션으로 UI를 업데이트하는 함수
+     * 생성된 미션으로 UI를 업데이트하는 함수 (애니메이션 추가)
      */
     private fun updateUIWithGeneratedMission() {
         try {
-            // 메인 스레드에서 실행되는지 확인
-            // UI 업데이트는 반드시 메인 스레드에서 해야 함
             runOnUiThread {
+                Log.d(TAG, "UI 업데이트 시작 - 성공 애니메이션으로 변경")
+                
+                // 🎬 성공 애니메이션으로 변경
+                setSuccessAnimation()
+                
                 // 미션 제목 표시
                 tvRecommendAction.text = missionTitle
 
                 // 버튼 활성화 및 텍스트 변경
                 btnTryText.text = "Try it!"
                 btnTryAction.isEnabled = true
-                btnTryAction.alpha = 1.0f // 완전 불투명
+                btnTryAction.alpha = 1.0f
 
-                Log.d(TAG, "미션 UI 업데이트 완료")
+                Log.d(TAG, "미션 UI 업데이트 완료 (성공 애니메이션 포함)")
             }
 
         } catch (e: Exception) {
@@ -958,10 +970,16 @@ class RecommendActionActivity : AppCompatActivity() {
             // 미션 수락 플래그 설정
             isMissionAccepted = true
 
-            // SharedPreferences에 오늘의 미션 기록
-            SharedPreferencesUtils.saveTodayMission(this, currentMission!!.id)
+            // SharedPreferences에 오늘의 미션 기록 (상세 정보 포함)
+            SharedPreferencesUtils.saveTodayMission(
+                context = this,
+                missionId = currentMission!!.id,
+                missionTitle = missionTitle,
+                missionDescription = missionDescription,
+                missionLocation = userLocation?.address ?: "현재 위치"
+            )
 
-            Log.d(TAG, "미션 수락 처리 완료 - ID: ${currentMission!!.id}")
+            Log.d(TAG, "미션 수락 처리 완료 - ID: ${currentMission!!.id}, 제목: $missionTitle")
 
         } catch (e: Exception) {
             Log.e(TAG, "미션 수락 처리 실패: ${e.message}")
@@ -975,7 +993,7 @@ class RecommendActionActivity : AppCompatActivity() {
     /**
      * AcceptMissionActivity로 이동하는 함수
      *
-     * 미션을 수락한 후 미션 진행 상황을 관리하는 화면으로 이동합니다.
+     * 미션을 수락한 후 미션 진행 상황을 관리하는 화면으로 이동
      */
     private fun proceedToAcceptMissionActivity() {
         try {
@@ -1015,13 +1033,16 @@ class RecommendActionActivity : AppCompatActivity() {
                 // 사용자 메시지들 전달 (감정 분석용)
                 putExtra("userMessages", userMessages)
 
+                // 새로운 미션임을 명시적으로 표시
+                putExtra("isNewMission", true)
+                
                 // 미션 수락 완료 플래그
                 putExtra("missionAccepted", true)
             }
 
             startActivity(intent)
-
-            // 현재 액티비티 종료 (뒤로가기 방지)
+            // 앞으로 이동하는 애니메이션
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()
 
             Log.d(TAG, "AcceptMissionActivity로 이동 완료")
@@ -1213,9 +1234,7 @@ class RecommendActionActivity : AppCompatActivity() {
     }
 
     /**
-     * 특정 위치에 맞는 맞춤형 미션을 생성하는 함수 (확장 가능)
-     *
-     * 위치별로 다른 미션을 제안할 수 있습니다.
+     * 특정 위치에 맞는 맞춤형 미션을 생성하는 함수
      */
     private fun generateLocationSpecificMission(locationInfo: LocationInfo): Pair<String, String> {
         return try {
@@ -1242,7 +1261,39 @@ class RecommendActionActivity : AppCompatActivity() {
 
         } catch (e: Exception) {
             Log.e(TAG, "위치별 미션 생성 실패: ${e.message}")
-            Pair("오늘의 힐링 미션", "주변을 둘러보며 마음을 편안하게 해보세요! 💚")
+            Pair("오늘의 힐링 미션", "주변을 둘러보며 마음을 편안하게 해보세요! ✨")
+        }
+    }
+
+    // ================================
+    // 애니메이션 제어 함수들 추가
+    // ================================
+    
+    /**
+     * 로딩 애니메이션으로 변경
+     */
+    private fun setLoadingAnimation() {
+        try {
+            lottieAnimation.setAnimation("lottie/lt_loading_anime.json")
+            lottieAnimation.repeatCount = LottieDrawable.INFINITE  // 정확한 상수 사용
+            lottieAnimation.playAnimation()
+            Log.d(TAG, "로딩 애니메이션 시작 - lt_loading_anime.json")
+        } catch (e: Exception) {
+            Log.e(TAG, "로딩 애니메이션 설정 실패: ${e.message}")
+        }
+    }
+    
+    /**
+     * 성공 애니메이션으로 변경
+     */
+    private fun setSuccessAnimation() {
+        try {
+            lottieAnimation.setAnimation("lottie/lt_smile_anime.json")
+            lottieAnimation.repeatCount = LottieDrawable.INFINITE  // 정확한 상수 사용
+            lottieAnimation.playAnimation()
+            Log.d(TAG, "성공 애니메이션 시작 - lt_smile_anime.json")
+        } catch (e: Exception) {
+            Log.e(TAG, "성공 애니메이션 설정 실패: ${e.message}")
         }
     }
 }

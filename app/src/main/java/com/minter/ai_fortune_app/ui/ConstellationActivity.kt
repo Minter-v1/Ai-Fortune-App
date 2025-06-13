@@ -41,8 +41,13 @@ class ConstellationActivity : AppCompatActivity() {
     private lateinit var btnCollect: View
     private lateinit var btnList: View
     private lateinit var layoutModal: View
-    private lateinit var tvModalMessage: TextView
-    private lateinit var btnModalClose: View
+    
+    // ⭐ 새로운 모달 구조 사용
+    private lateinit var ivStarImage: ImageView
+    private lateinit var tvStarTitle: TextView
+    private lateinit var tvStarInfo: TextView
+    private lateinit var tvStarDescription: TextView
+    private lateinit var btnModalClose: ImageView
 
     // ================================
     // 데이터 변수들
@@ -161,7 +166,10 @@ class ConstellationActivity : AppCompatActivity() {
 
             // 모달 관련 요소들
             layoutModal = findViewById(R.id.layout_modal)
-            tvModalMessage = findViewById(R.id.tv_modal_message)
+            ivStarImage = findViewById(R.id.iv_star_image)
+            tvStarTitle = findViewById(R.id.tv_star_title)
+            tvStarInfo = findViewById(R.id.tv_star_info)
+            tvStarDescription = findViewById(R.id.tv_star_description)
             btnModalClose = findViewById(R.id.btn_modal_close)
 
             // 모달은 기본적으로 숨김 상태 유지
@@ -201,6 +209,8 @@ class ConstellationActivity : AppCompatActivity() {
                         putExtra("emotionDisplayName", emotionDisplayName)
                     }
                     startActivity(intent)
+                    // 앞으로 이동하는 애니메이션
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                 }
             }
 
@@ -220,6 +230,8 @@ class ConstellationActivity : AppCompatActivity() {
                     putExtra("emotionDisplayName", emotionDisplayName)
                 }
                 startActivity(intent)
+                // 앞으로 이동하는 애니메이션
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             }
 
             // 모달 닫기 버튼
@@ -343,7 +355,7 @@ class ConstellationActivity : AppCompatActivity() {
             Log.d(TAG, "이미 수집 모달 표시")
 
             // 모달 내용 업데이트
-            tvModalMessage.text = "오늘은\n이미 수집하셨습니다."
+            tvStarTitle.text = "오늘은\n이미 수집하셨습니다."
 
             // 모달 표시
             layoutModal.visibility = View.VISIBLE
@@ -402,12 +414,9 @@ class ConstellationActivity : AppCompatActivity() {
         try {
             Log.d(TAG, "AcceptMissionActivity로 돌아가기")
             
-            // 명시적으로 AcceptMissionActivity로 이동
             val intent = Intent(this, AcceptMissionActivity::class.java).apply {
-                // 기존 AcceptMissionActivity로 돌아가기 (스택 위의 모든 Activity 제거)
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 
-                // 필요한 데이터 전달
                 putExtra("userName", userName)
                 putExtra("userBirthDate", userBirthDate)
                 putExtra("sajuId", sajuId)
@@ -420,20 +429,17 @@ class ConstellationActivity : AppCompatActivity() {
                 putExtra("userLatitude", userLatitude)
                 putExtra("userLongitude", userLongitude)
                 putExtra("userAddress", userAddress)
-                
-                // ConstellationActivity에서 돌아왔다는 플래그
                 putExtra("fromConstellation", true)
             }
             
             startActivity(intent)
-            overridePendingTransition(0, 0) // 애니메이션 비활성화
+            // 뒤로 이동하는 애니메이션 (왼쪽에서 슬라이드 인)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
             finish()
-            
-            Log.d(TAG, "AcceptMissionActivity로 돌아가기 완료")
             
         } catch (e: Exception) {
             Log.e(TAG, "AcceptMissionActivity 돌아가기 실패: ${e.message}")
-            finish() // 실패 시 기본 동작
+            finish()
         }
     }
 }

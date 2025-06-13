@@ -5,7 +5,7 @@
     android:viewportWidth="350"
     android:viewportHeight="400">
 
-    <!-- 북두칠성 연결선 - 올바른 국자 모양 -->
+
 
     <!-- 국자 바닥 (왼쪽에서 오른쪽으로) -->
     <!-- 두베(star_1) → 메라크(star_2) -->

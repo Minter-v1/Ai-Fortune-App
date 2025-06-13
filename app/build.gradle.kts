@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,7 +19,19 @@ android {
 
 
         // OpenAI API 키 설정 (local.properties에서 읽어옴)
-        val openaiApiKey = project.findProperty("MOCOM_API_KEY")?.toString()
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { localProperties.load(it) }
+        }
+        
+        val openaiApiKey = localProperties.getProperty("MOCOM_API_KEY") ?: ""
+        
+        // API 키 상태 로깅 (빌드 시점)
+        println("🔥 BUILD: local.properties 파일 존재: ${localPropertiesFile.exists()}")
+        println("🔥 BUILD: MOCOM_API_KEY 길이: ${openaiApiKey.length}")
+        println("🔥 BUILD: MOCOM_API_KEY 시작 10자: ${openaiApiKey.take(10)}")
+        
         buildConfigField("String", "MOCOM_API_KEY", "\"$openaiApiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -70,6 +84,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation(libs.androidx.room.external.antlr)
+    implementation(libs.androidx.media3.common.ktx)
     kapt("androidx.room:room-compiler:2.6.1")
     
     // Coroutines

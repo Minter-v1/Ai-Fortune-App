@@ -785,8 +785,8 @@ class ChatActivity : AppCompatActivity() {
             }
 
             startActivity(intent)
-
-            // 현재 액티비티 종료 (뒤로가기 방지)
+            // 앞으로 이동하는 애니메이션
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()
 
             Log.d(TAG, "RecommendActionActivity로 이동 완료")

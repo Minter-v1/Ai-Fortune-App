@@ -8,6 +8,7 @@ import android.os.Handler
 import android.text.Layout
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import com.minter.ai_fortune_app.R
 import com.minter.ai_fortune_app.api.repository.OpenAIRepository
 import com.minter.ai_fortune_app.data.model.EmotionType
 import com.minter.ai_fortune_app.data.model.*
+import com.minter.ai_fortune_app.utils.DateUtils
 import com.minter.ai_fortune_app.utils.SharedPreferencesUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,6 +57,10 @@ class AcceptMissionActivity : AppCompatActivity() {
     private lateinit var btnViewConstellation: View
     private lateinit var layoutMissionSuccess: View
     private lateinit var btnRetryMission: View
+    private lateinit var ivStarImage: ImageView
+    private lateinit var tvStarTitle: TextView
+    private lateinit var tvStarInfo: TextView
+    private lateinit var tvStarDescription: TextView
 
     // ================================
     // 데이터 변수들
@@ -159,8 +165,26 @@ class AcceptMissionActivity : AppCompatActivity() {
 
     private fun handleIntentData() {
         try {
-            userName = intent.getStringExtra("userName") ?: "사용자"
-            userBirthDate = intent.getStringExtra("userBirthDate") ?: "0000-00-00"
+            // Intent에서 사용자 정보 먼저 시도
+            userName = intent.getStringExtra("userName") ?: ""
+            userBirthDate = intent.getStringExtra("userBirthDate") ?: ""
+            
+            // Intent에서 사용자 정보가 없거나 기본값이면 SharedPreferences에서 복원
+            if (userName.isEmpty() || userBirthDate.isEmpty() || userBirthDate == "0000-00-00") {
+                Log.d(TAG, "Intent에서 사용자 정보 부족 - SharedPreferences에서 복원 시도")
+                val savedUserInfo = SharedPreferencesUtils.getUserInfo(this)
+                if (savedUserInfo != null) {
+                    val (savedName, savedBirthDate) = savedUserInfo
+                    if (userName.isEmpty()) userName = savedName
+                    if (userBirthDate.isEmpty() || userBirthDate == "0000-00-00") userBirthDate = savedBirthDate
+                    Log.d(TAG, "사용자 정보 복원 완료 - 이름: $userName, 생년월일: $userBirthDate")
+                } else {
+                    Log.w(TAG, "저장된 사용자 정보 없음 - 기본값 사용")
+                    if (userName.isEmpty()) userName = "사용자"
+                    if (userBirthDate.isEmpty()) userBirthDate = "0000-00-00"
+                }
+            }
+
             sajuId = intent.getStringExtra("sajuId") ?: ""
             chatSessionId = intent.getStringExtra("chatSessionId") ?: ""
             categoryDisplayName = intent.getStringExtra("categoryDisplayName") ?: "오늘의 사주"
@@ -202,11 +226,10 @@ class AcceptMissionActivity : AppCompatActivity() {
 
             // 디버그 로그 추가
             Log.d(TAG, "=== Intent 데이터 확인 ===")
+            Log.d(TAG, "사용자 이름: $userName")
+            Log.d(TAG, "사용자 생년월일: $userBirthDate")
             Log.d(TAG, "미션 제목: $missionTitle")
             Log.d(TAG, "미션 상태: $missionStatus")
-            Log.d(TAG, "Intent에서 받은 상태: $statusName")
-            Log.d(TAG, "SharedPreferences 미션 완료: ${SharedPreferencesUtils.hasTodayMission(this)}")
-            Log.d(TAG, "MainActivity에서 온 여부: ${intent.getBooleanExtra("fromMainActivity", false)}")
             Log.d(TAG, "==========================")
 
             Log.d(TAG, "데이터 처리 완료 - 미션: $missionTitle, 상태: $missionStatus")
@@ -217,6 +240,7 @@ class AcceptMissionActivity : AppCompatActivity() {
             missionTitle = "오늘의 미션"
             missionDescription = "미션을 수행해보세요!"
             missionStatus = MissionStatus.ACCEPTED // 기본값을 ACCEPTED로 설정
+            userBirthDate = "0000-00-00" // 최후의 기본값
         }
     }
 
@@ -233,8 +257,14 @@ class AcceptMissionActivity : AppCompatActivity() {
             btnViewConstellation = findViewById(R.id.btn_view_constellation)
             layoutMissionSuccess = findViewById(R.id.layout_mission_success)
             btnRetryMission = findViewById(R.id.btn_retry_mission)
+            ivStarImage = findViewById(R.id.iv_star_image)
+            tvStarTitle = findViewById(R.id.tv_star_title)
+            tvStarInfo = findViewById(R.id.tv_star_info)
+            tvStarDescription = findViewById(R.id.tv_star_description)
 
+            // 모달 숨기기
             layoutMissionSuccess.visibility = View.GONE
+            layoutMissionSuccess.alpha = 0f
 
             // 미션 완료 버튼 텍스트 설정
             var btnMissionCompleteText = btnMissionComplete.findViewById<TextView>(R.id.tv_btn_text)
@@ -272,10 +302,208 @@ class AcceptMissionActivity : AppCompatActivity() {
                 onResultReviewClicked()
             }
 
+            // 디버그 메뉴 추가 - 사용자 이름을 더블탭하면 디버그 메뉴 열기
+            setupDebugMenu()
+
             Log.d(TAG, "버튼 이벤트 설정 완료")
 
         } catch (e: Exception) {
             Log.e(TAG, "버튼 이벤트 설정 실패: ${e.message}")
+        }
+    }
+
+    /**
+     * 디버그 메뉴 설정 (더블탭으로 활성화)
+     */
+    private fun setupDebugMenu() {
+        try {
+            var lastTapTime = 0L
+            val doubleTapThreshold = 500L // 0.5초 내 더블탭
+
+            tvUserName.setOnClickListener {
+                val currentTime = System.currentTimeMillis()
+                
+                if (currentTime - lastTapTime < doubleTapThreshold) {
+                    // 더블탭 감지 - 디버그 메뉴 표시
+                    showDebugMenu()
+                }
+                
+                lastTapTime = currentTime
+            }
+
+            Log.d(TAG, "🔧 디버그 메뉴 설정 완료 (사용자 이름 더블탭으로 활성화)")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "디버그 메뉴 설정 실패: ${e.message}")
+        }
+    }
+
+    /**
+     * 디버그 메뉴 다이얼로그 표시
+     */
+    private fun showDebugMenu() {
+        try {
+            Log.d(TAG, "🔧 디버그 메뉴 열기")
+
+            val options = arrayOf(
+                "내일로 이동 (+1일) → MainActivity",
+                "모레로 이동 (+2일) → MainActivity",
+                "3일 후로 이동 (+3일) → MainActivity",
+                "1주일 후로 이동 (+7일) → MainActivity",
+                "어제로 이동 (-1일) → MainActivity",
+                "오늘로 돌아가기 (초기화) → MainActivity",
+                "현재 설정 확인만"
+            )
+
+            val builder = android.app.AlertDialog.Builder(this)
+            builder.setTitle("🔧 디버그 메뉴 - 날짜 시뮬레이션")
+            builder.setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> setDebugDateAndGoToMain(1, "내일")
+                    1 -> setDebugDateAndGoToMain(2, "모레")
+                    2 -> setDebugDateAndGoToMain(3, "3일 후")
+                    3 -> setDebugDateAndGoToMain(7, "1주일 후")
+                    4 -> setDebugDateAndGoToMain(-1, "어제")
+                    5 -> resetDebugDateAndGoToMain()
+                    6 -> showCurrentDebugStatus()
+                }
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
+            
+            val dialog = builder.create()
+            dialog.show()
+
+        } catch (e: Exception) {
+            Log.e(TAG, "디버그 메뉴 표시 실패: ${e.message}")
+        }
+    }
+
+    /**
+     * 디버그 날짜 설정 후 MainActivity로 이동
+     */
+    private fun setDebugDateAndGoToMain(offsetDays: Int, description: String) {
+        try {
+            DateUtils.setDebugDayOffset(offsetDays)
+            
+            val currentDebugDate = DateUtils.getCurrentDate()
+            
+            Log.d(TAG, "🔧 디버그 날짜 설정 완료 - $description ($currentDebugDate)")
+            
+            // MainActivity로 이동하는 다이얼로그 표시
+            val message = "날짜가 $description 으로 설정되었습니다\n\n" +
+                         "현재 앱 날짜: $currentDebugDate\n" +
+                         "오프셋: ${if (offsetDays > 0) "+$offsetDays" else "$offsetDays"}일\n\n" +
+                         "새로운 날짜 테스트를 위해 MainActivity로 이동합니다."
+
+            val confirmBuilder = android.app.AlertDialog.Builder(this)
+            confirmBuilder.setTitle("테스트 시작")
+            confirmBuilder.setMessage(message)
+            confirmBuilder.setPositiveButton("MainActivity로 이동") { _, _ ->
+                goToMainActivity()
+            }
+            confirmBuilder.setNegativeButton("현재 화면 유지") { _, _ ->
+                // 현재 화면에 그대로 있기
+                showMessage("날짜 설정 완료. 현재 화면에서 계속 진행합니다.")
+            }
+            confirmBuilder.show()
+
+        } catch (e: Exception) {
+            Log.e(TAG, "디버그 날짜 설정 실패: ${e.message}")
+            showMessage("날짜 설정 중 오류가 발생했습니다.")
+        }
+    }
+
+    /**
+     * 디버그 날짜 초기화 후 MainActivity로 이동
+     */
+    private fun resetDebugDateAndGoToMain() {
+        try {
+            DateUtils.clearDebugMode()
+            
+            val currentDate = DateUtils.getCurrentDate()
+            
+            Log.d(TAG, "🔧 디버그 날짜 초기화 완료")
+            
+            // MainActivity로 이동하는 다이얼로그 표시
+            val message = "날짜가 오늘로 초기화되었습니다.\n\n" +
+                         "현재 앱 날짜: $currentDate\n" +
+                         "디버그 모드: 비활성화\n\n" +
+                         "정상 날짜로 테스트하기 위해 MainActivity로 이동합니다."
+
+            val confirmBuilder = android.app.AlertDialog.Builder(this)
+            confirmBuilder.setTitle("🏠 정상 모드 복귀")
+            confirmBuilder.setMessage(message)
+            confirmBuilder.setPositiveButton("MainActivity로 이동") { _, _ ->
+                goToMainActivity()
+            }
+            confirmBuilder.setNegativeButton("현재 화면 유지") { _, _ ->
+                showMessage("날짜 초기화 완료! 현재 화면에서 계속 진행합니다.")
+            }
+            confirmBuilder.show()
+
+        } catch (e: Exception) {
+            Log.e(TAG, "디버그 날짜 초기화 실패: ${e.message}")
+            showMessage("날짜 초기화 중 오류가 발생했습니다.")
+        }
+    }
+
+    /**
+     * MainActivity로 이동 (새로운 날짜 테스트를 위해)
+     */
+    private fun goToMainActivity() {
+        try {
+            Log.d(TAG, "MainActivity로 이동 시작")
+
+            val intent = Intent(this, MainActivity::class.java).apply {
+                // 새로운 태스크로 시작하고 기존 액티비티 스택 제거
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                
+                // 디버그 모드임을 알리는 플래그 (선택사항)
+                putExtra("debugMode", DateUtils.isDebugModeActive())
+                putExtra("debugDate", DateUtils.getCurrentDate())
+            }
+
+            startActivity(intent)
+            
+            // 현재 액티비티 종료
+            finish()
+
+            Log.d(TAG, "MainActivity로 이동 완료")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "MainActivity로 이동 실패: ${e.message}")
+            showMessage("MainActivity로 이동하는 중 오류가 발생했습니다.")
+        }
+    }
+
+    /**
+     * 현재 디버그 상태 확인
+     */
+    private fun showCurrentDebugStatus() {
+        try {
+            val isDebugActive = DateUtils.isDebugModeActive()
+            val currentDate = DateUtils.getCurrentDate()
+            val offset = DateUtils.getDebugDayOffset()
+            
+            val message = if (isDebugActive) {
+                "🔧 디버그 모드 활성화\n\n" +
+                "현재 앱 날짜: $currentDate\n" +
+                "오프셋: ${if (offset > 0) "+$offset" else "$offset"}일\n\n" +
+                "실제 시스템 날짜와 다를 수 있습니다."
+            } else {
+                "디버그 모드 비활성화\n\n" +
+                "현재 앱 날짜: $currentDate\n" +
+                "실제 시스템 날짜와 동일합니다."
+            }
+            
+            showMessage(message)
+            
+            Log.d(TAG, "🔧 디버그 상태 확인 - 활성화: $isDebugActive, 날짜: $currentDate, 오프셋: $offset")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "디버그 상태 확인 실패: ${e.message}")
+            showMessage("상태 확인 중 오류가 발생했습니다.")
         }
     }
 
@@ -301,16 +529,11 @@ class AcceptMissionActivity : AppCompatActivity() {
 
             when (missionStatus) {
                 MissionStatus.ACCEPTED -> {
+                    // 미션 수락 상태 - 아직 완료하지 않음
                     btnMissionComplete.visibility = View.VISIBLE
                     
-                    // 앱을 한 번이라도 사용했다면 별자리 보기 버튼도 활성화
-                    if (hasUsedAppBefore) {
-                        btnViewConstellation.visibility = View.VISIBLE
-                        val btnConstellationText = btnViewConstellation.findViewById<TextView>(R.id.tv_btn_text)
-                        btnConstellationText?.text = "별자리 보기"
-                    } else {
-                        btnViewConstellation.visibility = View.GONE
-                    }
+                    // 미션을 완료하지 않았으므로 별자리 보기 버튼 숨김
+                    btnViewConstellation.visibility = View.GONE
 
                     val btnText = btnMissionComplete.findViewById<TextView>(R.id.tv_btn_text)
                     btnText?.text = "미션 완료"
@@ -320,7 +543,7 @@ class AcceptMissionActivity : AppCompatActivity() {
                 }
 
                 MissionStatus.COMPLETED -> {
-                    // 미션 완료 상태 UI 업데이트
+                    // 미션 완료 상태 - 별자리 보기 가능
                     btnMissionComplete.visibility = View.GONE  // 미션완료 버튼 숨기기
                     btnViewConstellation.visibility = View.VISIBLE
 
@@ -332,6 +555,7 @@ class AcceptMissionActivity : AppCompatActivity() {
                 }
 
                 MissionStatus.REWARD_RECEIVED -> {
+                    // 보상 수령 완료 상태 - 별자리 보기 가능
                     btnMissionComplete.visibility = View.GONE
                     btnViewConstellation.visibility = View.VISIBLE
 
@@ -343,23 +567,16 @@ class AcceptMissionActivity : AppCompatActivity() {
                 }
 
                 else -> {
+                    // 기타 상태 - 기본적으로 미션 완료 버튼만 표시
                     btnMissionComplete.visibility = View.VISIBLE
-                    
-                    // 앱을 한 번이라도 사용했다면 별자리 보기 버튼도 활성화
-                    if (hasUsedAppBefore) {
-                        btnViewConstellation.visibility = View.VISIBLE
-                        val btnConstellationText = btnViewConstellation.findViewById<TextView>(R.id.tv_btn_text)
-                        btnConstellationText?.text = "별자리 보기"
-                    } else {
-                        btnViewConstellation.visibility = View.GONE
-                    }
+                    btnViewConstellation.visibility = View.GONE
                     
                     // 미션명과 남은시간을 기본 상태로 설정
                     updateMissionAppearanceForStatus(false)
                 }
             }
 
-            Log.d(TAG, "UI 상태 업데이트 완료 - 상태: $missionStatus, 앱 사용 경험: $hasUsedAppBefore")
+            Log.d(TAG, "UI 상태 업데이트 완료 - 상태: $missionStatus, 별자리 보기 버튼: ${btnViewConstellation.visibility}")
             
             // 디버그 로그 추가
             debugCurrentUIState()
@@ -386,7 +603,7 @@ class AcceptMissionActivity : AppCompatActivity() {
                 tvMissionTitle.invalidate()
                 tvRemainingTime.invalidate()
                 
-                Log.d(TAG, "✅ 미션 완료 외관 적용 - 미션명: 녹색, 남은시간: 취소선")
+                Log.d(TAG, "미션 완료 외관 적용 - 미션명: 녹색, 남은시간: 취소선")
             } else {
                 // 미션 진행 중: 미션명을 기본 색상으로, 남은시간 취소선 제거
                 tvMissionTitle.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -396,11 +613,11 @@ class AcceptMissionActivity : AppCompatActivity() {
                 tvMissionTitle.invalidate()
                 tvRemainingTime.invalidate()
                 
-                Log.d(TAG, "⭐ 미션 진행 중 외관 적용 - 미션명: 기본 색상, 남은시간: 정상")
+                Log.d(TAG, "미션 진행 중 외관 적용 - 미션명: 기본 색상, 남은시간: 정상")
             }
             
         } catch (e: Exception) {
-            Log.e(TAG, "❌ 미션 외관 업데이트 실패: ${e.message}")
+            Log.e(TAG, "미션 외관 업데이트 실패: ${e.message}")
             e.printStackTrace()
         }
     }
@@ -475,7 +692,15 @@ class AcceptMissionActivity : AppCompatActivity() {
             missionStatus = MissionStatus.COMPLETED
             isMissionCompleted = true
 
-            SharedPreferencesUtils.saveTodayMission(this, missionId)
+            // 미션 정보  저장
+            SharedPreferencesUtils.saveTodayMission(
+                context = this, 
+                missionId = missionId,
+                missionTitle = missionTitle,
+                missionDescription = missionDescription,
+                missionLocation = missionLocation
+            )
+            
             stopMissionTimer()
             
             // 미션 완료 시 남은시간 표시를 "완료됨!"으로 변경
@@ -511,14 +736,14 @@ class AcceptMissionActivity : AppCompatActivity() {
             
             if (savedEmotion != null) {
                 // 이미 분석된 감정이 있으면 그것을 사용
-                val (emotionType, emotionDisplayName) = savedEmotion
+                val (savedEmotionType, savedEmotionDisplayName) = savedEmotion
                 
                 try {
-                    analyzedEmotion = EmotionType.valueOf(emotionType.uppercase())
-                    this.emotionDisplayName = emotionDisplayName
+                    analyzedEmotion = EmotionType.valueOf(savedEmotionType.uppercase())
+                    this.emotionDisplayName = savedEmotionDisplayName
                     isEmotionAnalyzed = true
                     
-                    Log.d(TAG, "✅ 저장된 감정 분석 결과 사용 - 감정: $emotionType, 표시명: $emotionDisplayName")
+                    Log.d(TAG, "저장된 감정 분석 결과 사용 - 감정: $savedEmotionType, 표시명: $savedEmotionDisplayName")
                 } catch (e: Exception) {
                     Log.e(TAG, "저장된 감정 파싱 실패, 새로 분석: ${e.message}")
                     startEmotionAnalysis()
@@ -561,7 +786,7 @@ class AcceptMissionActivity : AppCompatActivity() {
                 SharedPreferencesUtils.saveTodayEmotionAnalysis(this@AcceptMissionActivity, 
                     analyzedEmotion!!.name, emotionDisplayName)
 
-                Log.d(TAG, "✅ 새로운 감정 분석 완료 및 저장 - 결과: $emotionDisplayName")
+                Log.d(TAG, "새로운 감정 분석 완료 및 저장 - 결과: $emotionDisplayName")
 
             } catch (e: Exception) {
                 Log.e(TAG, "감정 분석 실패: ${e.message}")
@@ -577,26 +802,85 @@ class AcceptMissionActivity : AppCompatActivity() {
     }
 
     /**
-     * 별자리 보기 버튼 클릭 시 처리 (수정된 버전)
+     * 별자리 보기 버튼 클릭 시 처리 (수정된 버전 - 별 수집 여부 우선 확인)
      */
     private fun onViewConstellationClicked() {
         try {
             Log.d(TAG, "별자리 보기 처리 시작")
 
+            // 미션 완료 여부 다시 한번 확인
+            if (missionStatus != MissionStatus.COMPLETED && missionStatus != MissionStatus.REWARD_RECEIVED) {
+                Log.w(TAG, "미션 미완료 상태 - 별자리 보기 차단")
+                showMessage("먼저 미션을 완료해주세요!")
+                return
+            }
+
+            // 미션이 실제로 완료되었는지 SharedPreferences에서도 확인
+            if (!SharedPreferencesUtils.hasTodayMission(this)) {
+                Log.w(TAG, "SharedPreferences에서 미션 미완료 - 별자리 보기 차단")
+                showMessage("먼저 미션을 완료해주세요!")
+                return
+            }
+
+            // 별자리를 이미 수집했다면 감정 분석 확인 없이 바로 이동
+            val hasCollectedStar = SharedPreferencesUtils.hasTodayConstellation(this)
+            if (hasCollectedStar) {
+                Log.d(TAG, "별을 이미 수집함 - 감정 분석 확인 없이 바로 ConstellationActivity로 이동")
+                
+                // 저장된 감정 분석 결과 복원 (표시용)
+                val savedEmotion = SharedPreferencesUtils.getTodayEmotionAnalysis(this)
+                if (savedEmotion != null) {
+                    val (savedEmotionType, savedEmotionDisplayName) = savedEmotion
+                    try {
+                        analyzedEmotion = EmotionType.valueOf(savedEmotionType.uppercase())
+                        this.emotionDisplayName = savedEmotionDisplayName
+                        isEmotionAnalyzed = true
+                        Log.d(TAG, "저장된 감정 분석 결과 복원: $savedEmotionType")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "저장된 감정 복원 실패: ${e.message}")
+                        // 실패해도 기본값으로 진행
+                        analyzedEmotion = EmotionType.HAPPY
+                        this.emotionDisplayName = EmotionType.HAPPY.displayName
+                        isEmotionAnalyzed = true
+                    }
+                } else {
+                    // 저장된 감정이 없어도 기본값으로 진행 (이미 별을 수집했으므로)
+                    analyzedEmotion = EmotionType.HAPPY
+                    this.emotionDisplayName = EmotionType.HAPPY.displayName
+                    isEmotionAnalyzed = true
+                    Log.d(TAG, "저장된 감정 정보 없음 - 기본값으로 진행")
+                }
+                
+                // 바로 별자리 화면으로 이동
+                proceedToConstellationFlow()
+                return
+            }
+
+            // 별을 아직 수집하지 않은 경우에만 감정 분석 확인
+            Log.d(TAG, "별을 아직 수집하지 않음 - 감정 분석 상태 확인")
+
             // 저장된 감정 분석 결과가 있는지 먼저 확인
             if (!isEmotionAnalyzed) {
                 val savedEmotion = SharedPreferencesUtils.getTodayEmotionAnalysis(this)
                 if (savedEmotion != null) {
-                    val (emotionType, emotionDisplayName) = savedEmotion
+                    val (savedEmotionType, savedEmotionDisplayName) = savedEmotion
                     try {
-                        analyzedEmotion = EmotionType.valueOf(emotionType.uppercase())
-                        this.emotionDisplayName = emotionDisplayName
+                        analyzedEmotion = EmotionType.valueOf(savedEmotionType.uppercase())
+                        this.emotionDisplayName = savedEmotionDisplayName
                         isEmotionAnalyzed = true
-                        Log.d(TAG, "저장된 감정 분석 결과 복원: $emotionType")
+                        Log.d(TAG, "저장된 감정 분석 결과 복원: $savedEmotionType")
                     } catch (e: Exception) {
                         Log.e(TAG, "저장된 감정 복원 실패: ${e.message}")
+                        // 실패해도 기본값으로 진행
+                        analyzedEmotion = EmotionType.HAPPY
+                        this.emotionDisplayName = EmotionType.HAPPY.displayName
+                        isEmotionAnalyzed = true
                     }
                 }
+                
+                // 바로 별자리 화면으로 이동
+                proceedToConstellationFlow()
+                return
             }
 
             // 감정 분석이 완료되지 않았다면 대기
@@ -607,7 +891,7 @@ class AcceptMissionActivity : AppCompatActivity() {
                 return
             }
 
-            // 감정 분석이 완료되었다면 즉시 이동
+            // 모든 조건을 만족하면 별자리 화면으로 이동
             proceedToConstellationFlow()
 
         } catch (e: Exception) {
@@ -690,16 +974,20 @@ class AcceptMissionActivity : AppCompatActivity() {
             val modalTitle = layoutMissionSuccess.findViewById<TextView>(R.id.tv_modal_title)
             val modalDescription = layoutMissionSuccess.findViewById<TextView>(R.id.tv_modal_description)
 
-            // 모달 내부의 버튼 찾기 - 올바른 방법
+            // 모달 내부의 버튼 찾기
             val modalInnerLayout = layoutMissionSuccess.findViewById<View>(R.id.layout_mission_success_modal)
             val modalButton = modalInnerLayout?.findViewById<View>(R.id.btn_modal_ok)
             val modalButtonText = modalButton?.findViewById<TextView>(R.id.tv_btn_text)
+
+            // 미션 완료 시 아이콘을 ic_success로 변경
+            val modalIcon = modalInnerLayout?.findViewById<ImageView>(R.id.iv_modal_icon)
+            modalIcon?.setImageResource(R.drawable.ic_success)
 
             modalButtonText?.text = "확인"
             modalTitle?.text = "미션 성공!"
             modalDescription?.text = "축하합니다! 미션을 성공적으로 완료하셨습니다.\n감정 분석을 통해 별자리를 수집하세요! ✨"
 
-            Log.d(TAG, "모달 내용 업데이트 완료")
+            Log.d(TAG, "모달 내용 업데이트 완료 - 아이콘: ic_success")
 
         } catch (e: Exception) {
             Log.e(TAG, "모달 내용 업데이트 실패: ${e.message}")
@@ -780,7 +1068,8 @@ class AcceptMissionActivity : AppCompatActivity() {
             }
 
             startActivity(intent)
-            overridePendingTransition(0, 0) // 애니메이션 비활성화
+            // 앞으로 이동하는 애니메이션 (오른쪽에서 슬라이드 인)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()
 
             Log.d(TAG, "ConstellationActivity로 이동 완료")
@@ -857,27 +1146,21 @@ class AcceptMissionActivity : AppCompatActivity() {
             Log.d(TAG, "SajuResultActivity로 이동 시작")
 
             val intent = Intent(this, SajuResultActivity::class.java).apply {
-                // 사용자 정보 전달
                 putExtra("userName", userName)
                 putExtra("userBirthDate", userBirthDate)
-                
-                // 사주 관련 정보 전달
                 putExtra("sajuId", sajuId)
                 putExtra("category", selectedCategory.name)
                 putExtra("categoryDisplayName", categoryDisplayName)
                 putExtra("sajuContent", sajuContent)
-                
-                // 위치 정보 추가 (누락된 부분)
                 putExtra("userLatitude", userLatitude)
                 putExtra("userLongitude", userLongitude)
                 putExtra("userAddress", userAddress)
-                
-                // AcceptMissionActivity에서 왔다는 플래그
                 putExtra("fromAcceptMission", true)
             }
 
             startActivity(intent)
-            overridePendingTransition(0, 0) // 애니메이션 비활성화
+            // 앞으로 이동하는 애니메이션
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 
             Log.d(TAG, "SajuResultActivity로 이동 완료")
 
@@ -1001,7 +1284,7 @@ class AcceptMissionActivity : AppCompatActivity() {
     }
 
     /**
-     * 조건에 따른 상태 복원 (수정된 버전)
+     * 조건에 따른 상태 복원 (수정된 버전 - 새 미션과 복원 구분)
      */
     private fun conditionalStateRestore() {
         try {
@@ -1009,6 +1292,7 @@ class AcceptMissionActivity : AppCompatActivity() {
             val isFromConstellation = intent.getBooleanExtra("fromConstellation", false)
             val isFromConstellationPersonal = intent.getBooleanExtra("fromConstellationPersonal", false)
             val isFromChat = intent.getBooleanExtra("fromChat", false)
+            val isNewMission = intent.getBooleanExtra("isNewMission", false) // 새로운 미션 여부
             val hasTodayMission = SharedPreferencesUtils.hasTodayMission(this)
             
             Log.d(TAG, "=== 조건부 상태 복원 시작 ===")
@@ -1016,10 +1300,29 @@ class AcceptMissionActivity : AppCompatActivity() {
             Log.d(TAG, "fromConstellation: $isFromConstellation")
             Log.d(TAG, "fromConstellationPersonal: $isFromConstellationPersonal")
             Log.d(TAG, "fromChat: $isFromChat")
+            Log.d(TAG, "isNewMission: $isNewMission")
             Log.d(TAG, "hasTodayMission: $hasTodayMission")
             Log.d(TAG, "현재 missionStatus: $missionStatus")
             
             when {
+                // 새로운 미션을 수락해서 들어온 경우 - 무조건 ACCEPTED 상태로 시작
+                isNewMission -> {
+                    Log.d(TAG, "새로운 미션 수락 - ACCEPTED 상태로 시작")
+                    missionStatus = MissionStatus.ACCEPTED
+                    isMissionCompleted = false
+                    updateUIForMissionStatus()
+                    startMissionTimer()
+                }
+                
+                // 채팅에서 온 경우 - 상태 복원하지 않음 (진행 중인 미션 유지)
+                isFromChat -> {
+                    Log.d(TAG, "채팅에서 돌아옴 - 기존 상태 유지")
+                    updateUIForMissionStatus()
+                    if (missionStatus == MissionStatus.ACCEPTED && !isMissionCompleted) {
+                        startMissionTimer()
+                    }
+                }
+                
                 // MainActivity에서 온 경우이고 미션이 완료된 경우
                 isFromMainActivity && hasTodayMission -> {
                     Log.d(TAG, "MainActivity에서 온 완료된 미션 - 상태 복원")
@@ -1032,20 +1335,17 @@ class AcceptMissionActivity : AppCompatActivity() {
                     restoreMissionToCompleted()
                 }
                 
-                // 채팅에서 온 경우 - 상태 복원하지 않음
-                isFromChat -> {
-                    Log.d(TAG, "채팅에서 돌아옴 - 기존 상태 유지")
-                    updateUIForMissionStatus()
-                    if (missionStatus == MissionStatus.ACCEPTED) {
-                        startMissionTimer()
-                    }
+                // 앱 재시작 등 기타 경우 - SharedPreferences 확인
+                hasTodayMission -> {
+                    Log.d(TAG, "앱 재시작 시 완료된 미션 감지 - 완료 상태로 복원")
+                    restoreMissionToCompleted()
                 }
                 
-                // 기본 경우
+                // 미션이 완료되지 않은 경우 - 진행 상태 유지
                 else -> {
-                    Log.d(TAG, "기본 케이스 - 현재 상태 유지")
+                    Log.d(TAG, "미완료 미션 - 진행 상태 유지")
                     updateUIForMissionStatus()
-                    if (missionStatus == MissionStatus.ACCEPTED && !hasTodayMission) {
+                    if (missionStatus == MissionStatus.ACCEPTED && !isMissionCompleted) {
                         startMissionTimer()
                     }
                 }
@@ -1056,33 +1356,91 @@ class AcceptMissionActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e(TAG, "조건부 상태 복원 실패: ${e.message}")
             e.printStackTrace()
-            // 실패 시 안전한 기본 동작
+            // 실패 시 안전한 기본 동작 - 새 미션으로 시작
+            Log.d(TAG, "복원 실패 - 새 미션으로 안전하게 시작")
+            missionStatus = MissionStatus.ACCEPTED
+            isMissionCompleted = false
             updateUIForMissionStatus()
-            if (missionStatus == MissionStatus.ACCEPTED) {
-                startMissionTimer()
-            }
+            startMissionTimer()
         }
     }
 
     /**
-     * 미션을 완료 상태로 복원
+     * 미션을 완료 상태로 복원 (감정 분석 포함)
      */
     private fun restoreMissionToCompleted() {
         try {
-            Log.d(TAG, "미션 완료 상태로 복원 시작")
+            Log.d(TAG, "미션 완료 상태로 복원 시작 (모달 없음)")
+            
+            // 모달을 확실히 숨기기 (먼저 처리)
+            layoutMissionSuccess.visibility = View.GONE
+            layoutMissionSuccess.alpha = 0f
             
             // 미션 상태를 완료로 변경
             missionStatus = MissionStatus.COMPLETED
             isMissionCompleted = true
             
+            // ⭐ 저장된 미션 정보 복원
+            val savedMissionInfo = SharedPreferencesUtils.getTodayMissionInfo(this)
+            if (savedMissionInfo != null) {
+                val (savedTitle, savedDescription, savedLocation) = savedMissionInfo
+                
+                // Intent에서 미션 정보가 없거나 기본값이면 복원
+                if (missionTitle == "오늘의 미션" || missionTitle.isEmpty()) {
+                    missionTitle = savedTitle
+                    Log.d(TAG, "미션 제목 복원: $missionTitle")
+                }
+                if (missionDescription == "미션을 수행해보세요!" || missionDescription.isEmpty()) {
+                    missionDescription = savedDescription
+                    Log.d(TAG, "미션 설명 복원: $missionDescription")
+                }
+                if (missionLocation == "현재 위치" || missionLocation.isEmpty()) {
+                    missionLocation = savedLocation
+                    Log.d(TAG, "미션 위치 복원: $missionLocation")
+                }
+                
+                // UI에 복원된 미션 제목 표시
+                tvMissionTitle.text = missionTitle
+            }
+            
             // 타이머 정지 및 완료 텍스트 표시
             stopMissionTimer()
             tvRemainingTime.text = "완료됨!"
             
-            // UI 업데이트
+            // 감정 분석 결과 복원 (우선순위 높임)
+            val savedEmotion = SharedPreferencesUtils.getTodayEmotionAnalysis(this)
+            if (savedEmotion != null) {
+                val (savedEmotionType, savedEmotionDisplayName) = savedEmotion
+                try {
+                    analyzedEmotion = EmotionType.valueOf(savedEmotionType.uppercase())
+                    this.emotionDisplayName = savedEmotionDisplayName
+                    isEmotionAnalyzed = true
+                    Log.d(TAG, " 저장된 감정 분석 결과 복원: $savedEmotionDisplayName")
+                } catch (e: Exception) {
+                    Log.e(TAG, "감정 분석 결과 복원 실패: ${e.message}")
+                    // 복원 실패 시 기본값 설정
+                    analyzedEmotion = EmotionType.HAPPY
+                    this.emotionDisplayName = EmotionType.HAPPY.displayName
+                    isEmotionAnalyzed = true
+                }
+            } else {
+                // 별을 이미 수집했다면 기본값이라도 설정
+                val hasCollectedStar = SharedPreferencesUtils.hasTodayConstellation(this)
+                if (hasCollectedStar) {
+                    analyzedEmotion = EmotionType.HAPPY
+                    this.emotionDisplayName = EmotionType.HAPPY.displayName
+                    isEmotionAnalyzed = true
+                    Log.d(TAG, "별 수집 완료 - 기본 감정으로 설정")
+                }
+            }
+            
+            // UI 업데이트만 수행 (모달 표시 없음)
             updateUIForMissionStatus()
             
-            Log.d(TAG, "✅ 미션 완료 상태 복원 완료")
+            Log.d(TAG, "미션 완료 상태 복원 완료 (감정 분석 포함)")
+            
+            // 복원 후 UI 상태 확인
+            debugCurrentUIState()
             
         } catch (e: Exception) {
             Log.e(TAG, "미션 완료 상태 복원 실패: ${e.message}")
@@ -1119,5 +1477,29 @@ class AcceptMissionActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e(TAG, "SharedPreferences 초기화 실패: ${e.message}")
         }
+    }
+
+    // 모든 별을 기본 상태로 초기화 (반투명)
+    private fun resetAllStars() {
+        // 구현 코드 추가
+    }
+
+    // 수집된 별자리들을 순서대로 활성화
+    private fun activateStarAtPosition(index: Int, emotionType: EmotionType, date: String) {
+        // 구현 코드 추가
+    }
+
+    private fun showAlreadyCollectedModal() {
+        // 별 이미지 숨기기
+        ivStarImage.visibility = View.GONE
+        
+        // 제목에 메시지 설정
+        tvStarTitle.text = "오늘은\n이미 수집하셨습니다."
+        
+        // 상세 정보와 설명 숨기기
+        tvStarInfo.visibility = View.GONE
+        tvStarDescription.visibility = View.GONE
+        
+
     }
 }
